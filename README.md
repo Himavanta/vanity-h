@@ -1,15 +1,15 @@
-# VanityH
+# vanity-h
 
 Hyperscript without the nesting — chainable syntax that reads the way the DOM looks.  
 告别嵌套的 hyperscript —— 链式语法，读起来和 DOM 的结构一样直观。
 
 ---
 
-Hyperscript is a capable way to build UI without a compiler. The nested `h()` calls are another story. VanityH turns them into a chainable syntax that reads the way the DOM looks — flat, ordered, and obvious.
+Hyperscript is a capable way to build UI without a compiler. The nested `h()` calls are another story. vanity-h turns them into a chainable syntax that reads the way the DOM looks — flat, ordered, and obvious.
 
 No JSX, no templates, no build step. Just functions that compose.
 
-Hyperscript 是不依赖编译器构建 UI 的强大方式。但嵌套的 `h()` 调用是另一回事。VanityH 将它们变成可链式调用的语法，读起来和 DOM 的结构一样——扁平、有序、一目了然。
+Hyperscript 是不依赖编译器构建 UI 的强大方式。但嵌套的 `h()` 调用是另一回事。vanity-h 将它们变成可链式调用的语法，读起来和 DOM 的结构一样——扁平、有序、一目了然。
 
 没有 JSX，没有模板，没有构建步骤。只有组合的函数。
 
@@ -37,7 +37,7 @@ Every layer adds indentation. Attributes, events, and children interleave. The v
 
 ---
 
-## The VanityH Way / VanityH 的方式
+## The vanity-h Way / vanity-h 的方式
 
 ```js
 div.class('card')(
@@ -59,9 +59,9 @@ The structure matches what you see in the browser. The outer element wraps its c
 
 ## How It Works / 原理
 
-VanityH is a thin wrapper around any hyperscript function. It gives you a set of proxy-based tag functions. Each tag function collects attributes through chained calls, then renders when invoked as a function with children.
+vanity-h is a thin wrapper around any hyperscript function. It gives you a set of proxy-based tag functions. Each tag function collects attributes through chained calls, then renders when invoked as a function with children.
 
-VanityH 是任意 hyperscript 函数的薄包装。它提供了一组基于 Proxy 的标签函数。每个标签函数通过链式调用收集属性，在被作为函数调用并传入子节点时渲染。
+vanity-h 是任意 hyperscript 函数的薄包装。它提供了一组基于 Proxy 的标签函数。每个标签函数通过链式调用收集属性，在被作为函数调用并传入子节点时渲染。
 
 ```js
 button.class('btn').onClick(handle)('Click me')
@@ -183,9 +183,9 @@ div(
 
 ## Wrapping Components / 包装组件
 
-Use `x(Component)` — returned by `createVanity(h)` — to turn any component function into a chainable VanityH element. This works with your own components, third‑party components, or anything that accepts props.
+Use `x(Component)` — returned by `createVanity(h)` — to turn any component function into a chainable vanity-h element. This works with your own components, third‑party components, or anything that accepts props.
 
-使用 `createVanity(h)` 返回的 `x(Component)` 可将任意组件函数转换为可链式调用的 VanityH 元素。这适用于你自己的组件、第三方组件，或任何接受 props 的函数。
+使用 `createVanity(h)` 返回的 `x(Component)` 可将任意组件函数转换为可链式调用的 vanity-h 元素。这适用于你自己的组件、第三方组件，或任何接受 props 的函数。
 
 ```js
 import createVanity from 'vanity-h'
@@ -233,11 +233,11 @@ The `VanityH<R>` type carries the renderer's node type, so your chainable elemen
 
 ---
 
-## What VanityH Is Not / VanityH 不是什么
+## What vanity-h Is Not / vanity-h 不是什么
 
-VanityH does not parse HTML. It does not introduce a component model. It does not manage state, track dependencies, or update the DOM. It is a syntax layer — a way to write hyperscript that looks as clean as the markup it produces. Your renderer handles the rest.
+vanity-h does not parse HTML. It does not introduce a component model. It does not manage state, track dependencies, or update the DOM. It is a syntax layer — a way to write hyperscript that looks as clean as the markup it produces. Your renderer handles the rest.
 
-VanityH 不解析 HTML。不引入组件模型。不管理状态，不追踪依赖，不更新 DOM。它是一个语法层——一种写 hyperscript 的方式，让它看起来和它产生的标记一样干净。其余由你的渲染器处理。
+vanity-h 不解析 HTML。不引入组件模型。不管理状态，不追踪依赖，不更新 DOM。它是一个语法层——一种写 hyperscript 的方式，让它看起来和它产生的标记一样干净。其余由你的渲染器处理。
 
 ---
 

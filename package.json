@@ -1,6 +1,6 @@
 {
   "name": "vanity-h",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Hyperscript without the nesting — chainable syntax that reads the way the DOM looks.",
   "keywords": [
     "Hyperscript Tagged Markup",
@@ -13,15 +13,15 @@
     "vanity-h",
     "virtual dom"
   ],
-  "homepage": "https://github.com/VanityH/vanityh#readme",
+  "homepage": "https://github.com/Himavanta/vanity-h#readme",
   "bugs": {
-    "url": "https://github.com/VanityH/vanityh/issues"
+    "url": "https://github.com/Himavanta/vanity-h/issues"
   },
   "license": "MIT",
   "author": "Himavanta@foxmail.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VanityH/vanityh.git"
+    "url": "git+https://github.com/Himavanta/vanity-h.git"
   },
   "files": [
     "dist"
