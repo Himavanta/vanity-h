@@ -19,13 +19,13 @@ function App() {
     main(
       x(Demo).name('Tom').age(20)(),
       Demo2.$.name('Tom').age(20)(),
-      div.style({ color: 'red' })(),
-    ),
+      div.style({ color: 'red' })()
+    )
   )
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 )

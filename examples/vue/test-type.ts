@@ -6,9 +6,9 @@ const Demo = defineComponent(
   },
   {
     props: {
-      text: String as PropType<string>,
-    },
-  },
+      text: String as PropType<string>
+    }
+  }
 )
 
 type DemoType = typeof Demo

@@ -10,7 +10,7 @@ import type {
   RenderFunction,
   ComponentOptions,
   ComponentObjectPropsOptions,
-  DefineSetupFnComponent,
+  DefineSetupFnComponent
 } from 'vue'
 
 import { createVanity, type VanityH, type ElementBuilder } from './index.ts'
@@ -65,14 +65,14 @@ export function defineComponent<
   Props extends Record<string, any>,
   E extends EmitsOptions = {},
   EE extends string = string,
-  S extends SlotsType = {},
+  S extends SlotsType = {}
 >(
   setup: (props: Props, ctx: SetupContext<E, S>) => RenderFunction | Promise<RenderFunction>,
   options?: Pick<ComponentOptions, 'name' | 'inheritAttrs'> & {
     props?: (keyof Props)[] | ComponentObjectPropsOptions<Props>
     emits?: E | EE[]
     slots?: S
-  },
+  }
 ): WithDollar<DefineSetupFnComponent<Props, E, S>, E> {
   return vueDefineComponent(setup as any, options as any) as any
 }

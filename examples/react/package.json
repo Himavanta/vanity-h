@@ -11,21 +11,21 @@
   },
   "dependencies": {
     "react": "catalog:",
-    "react-dom": "^19.2.5",
+    "react-dom": "^19.3.0",
     "vanity-h": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^10.2.0",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.5.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.12.0",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.58.2",
+    "typescript-eslint": "^8.70.1",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   }

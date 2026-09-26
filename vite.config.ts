@@ -5,19 +5,20 @@ export default defineConfig({
     entry: 'src/*.ts',
     dts: true,
     minify: true,
-    deps: { skipNodeModulesBundle: true },
     platform: 'neutral',
-    exports: true,
+    exports: true
   },
   lint: {
     options: {
       typeAware: true,
-      typeCheck: true,
-    },
+      typeCheck: true
+    }
   },
   fmt: {
-    singleQuote: true,
     semi: false,
     sortImports: {},
-  },
+    singleQuote: true,
+    trailingComma: 'none',
+    jsxSingleQuote: true
+  }
 })

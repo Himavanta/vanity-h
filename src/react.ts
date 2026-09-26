@@ -5,7 +5,7 @@ import {
   createVanity,
   type VanityH,
   type ElementBuilder,
-  type ExtractComponentProps,
+  type ExtractComponentProps
 } from './index.ts'
 
 type WithReactProps<P> = P & {
@@ -17,15 +17,13 @@ type WithReactProps<P> = P & {
 
 export type ReactElementBuilder<P> = ElementBuilder<WithReactProps<P>, JSX.Element, ReactNode>
 
-export type ReactVanityH = VanityH<JSX.Element, ReactNode, JSX.IntrinsicElements> & {
-  x: <T>(component: T) => ReactElementBuilder<ExtractComponentProps<T>>
-}
+export type ReactVanityH = VanityH<JSX.Element, ReactNode, JSX.IntrinsicElements>
 
 const vanity = createVanity(createElement) as unknown as ReactVanityH
 export default vanity
 
 export function defineComponent<T extends (props: any) => JSX.Element>(
-  component: T,
+  component: T
 ): T & { $: ReactElementBuilder<ExtractComponentProps<T>> } {
   return component as any
 }

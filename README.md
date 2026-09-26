@@ -25,9 +25,7 @@ h('div', { class: 'card' }, [
     h('h2', null, 'Title'),
     h('button', { class: 'close', onClick: handleClose }, '×')
   ]),
-  h('main', { class: 'card-body' }, [
-    h('p', null, 'Content goes here')
-  ])
+  h('main', { class: 'card-body' }, [h('p', null, 'Content goes here')])
 ])
 ```
 
@@ -41,13 +39,8 @@ Every layer adds indentation. Attributes, events, and children interleave. The v
 
 ```js
 div.class('card')(
-  header.class('card-header')(
-    h2('Title'),
-    button.class('close').onClick(handleClose)('×')
-  ),
-  main.class('card-body')(
-    p('Content goes here')
-  )
+  header.class('card-header')(h2('Title'), button.class('close').onClick(handleClose)('×')),
+  main.class('card-body')(p('Content goes here'))
 )
 ```
 
@@ -102,7 +95,7 @@ function App() {
 
   return div.class('app')(
     span('Count: ', count),
-    button.onClick(() => setCount((c) => c + 1))('+1'),
+    button.onClick(() => setCount((c) => c + 1))('+1')
   )
 }
 
@@ -175,7 +168,7 @@ hr()
 div(
   h1('Welcome'),
   p('This is a ', a.href('/about')('link')),
-  ['a', 'b', 'c'].map((s) => span(s)),
+  ['a', 'b', 'c'].map((s) => span(s))
 )
 ```
 

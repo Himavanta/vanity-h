@@ -54,5 +54,15 @@
     "vite-plus": "catalog:",
     "vue": "catalog:"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@12.6.0",
+  "inlinedDependencies": {
+    "@vue/reactivity": "3.5.43",
+    "@vue/runtime-core": "3.5.43",
+    "@vue/runtime-dom": "3.5.43",
+    "@vue/shared": "3.5.43",
+    "csstype": "3.2.3",
+    "preact": "10.29.8",
+    "react": "19.3.0",
+    "vue": "3.5.43"
+  }
 }

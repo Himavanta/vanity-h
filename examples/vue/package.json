@@ -14,11 +14,11 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitejs/plugin-vue": "^6.0.9",
     "@vue/tsconfig": "^0.9.1",
-    "typescript": "catalog:",
+    "typescript": "^6.0.3",
     "vite": "catalog:",
     "vite-plus": "catalog:",
-    "vue-tsc": "^3.2.6"
+    "vue-tsc": "^3.3.11"
   }
 }
