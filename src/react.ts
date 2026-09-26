@@ -19,11 +19,20 @@ export type ReactElementBuilder<P> = ElementBuilder<WithReactProps<P>, JSX.Eleme
 
 export type ReactVanityH = VanityH<JSX.Element, ReactNode, JSX.IntrinsicElements>
 
-const vanity = createVanity(createElement) as unknown as ReactVanityH
+/** 该适配器在 `Object.prototype` 上注册的属性名 */
+export const KEY = '$react'
+
+const vanity = createVanity(createElement, { key: KEY }) as unknown as ReactVanityH
 export default vanity
+
+declare global {
+  interface VanityKeys {
+    [KEY]: ReactElementBuilder<any>
+  }
+}
 
 export function defineComponent<T extends (props: any) => JSX.Element>(
   component: T
-): T & { $: ReactElementBuilder<ExtractComponentProps<T>> } {
+): T & { [KEY]: ReactElementBuilder<ExtractComponentProps<T>> } {
   return component as any
 }

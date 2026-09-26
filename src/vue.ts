@@ -50,11 +50,20 @@ export type ExtractVueProps<T> = T extends abstract new (...args: any[]) => { $p
   ? P
   : {}
 
-export const vanity = createVanity(h) as unknown as VueVanityH
+/** 该适配器在 `Object.prototype` 上注册的属性名 */
+export const KEY = '$vue'
+
+export const vanity = createVanity(h, { key: KEY }) as unknown as VueVanityH
 export default vanity
 
+declare global {
+  interface VanityKeys {
+    [KEY]: VueComponentWithProps
+  }
+}
+
 type WithDollar<R, E extends EmitsOptions> = R & {
-  $: VueComponentWithProps<
+  [KEY]: VueComponentWithProps<
     E extends Record<string, (...args: any[]) => any>
       ? Omit<ExtractVueProps<R>, `on${string}`> & EmitsToProps<E>
       : ExtractVueProps<R>

@@ -21,6 +21,21 @@ export interface VanityOptions {
   key?: string
 }
 
+/**
+ * 组件包装入口的注册表。
+ *
+ * 各框架适配器（`vanity-h/preact` 等）会在自己的模块里向此处添加对应的
+ * key，从而让任意对象上的 `obj.key` 获得精确类型；`Object` 继承它，
+ * 所以只需声明一次即可作用于所有对象。
+ */
+declare global {
+  interface VanityKeys {
+    /** 默认 key，未显式指定 `options.key` 时使用 */
+    $: any
+  }
+  interface Object extends VanityKeys {}
+}
+
 export default createVanity
 export function createVanity<
   H extends (tag: any, props: any, ...children: any[]) => any,
@@ -43,11 +58,4 @@ export function createVanity<
   return new Proxy({} as any, {
     get: (_, tag: string) => createProxy(tag)
   }) as VanityH<VNode>
-}
-
-declare global {
-  interface Object {
-    /** 默认 key 下的组件包装入口，对应 `createVanity(h)` 未传 `options.key` 时的行为 */
-    $: any
-  }
 }

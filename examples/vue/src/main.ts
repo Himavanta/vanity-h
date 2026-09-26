@@ -34,16 +34,18 @@ const Demo2 = defineComponent(
 const App = defineComponent(() => {
   return () =>
     div(
-      Transition.$.name('fade')(),
+      Transition.$vue.name('fade')(),
       div
         .class({ style_class: true })
         .style({ color: 'red' })
         .onclick(() => {})(),
-      Demo.$.name('tom')
+      Demo.$vue
+        .name('tom')
         .age(20)
         .onSay(() => {})
         .onRun(() => {})(),
-      Demo2.$.name('tom')
+      Demo2.$vue
+        .name('tom')
         .onSay((word) => console.log(word))
         .onRun(() => {})(),
       img.class(['image-class']).style('height:100%').src('source-url').alt('123')()

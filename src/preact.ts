@@ -23,11 +23,20 @@ export type PreactElementBuilder<P> = ElementBuilder<
 
 export type PreactVanityH = VanityH<JSX.Element, ComponentChild, JSX.IntrinsicElements>
 
-const vanity = createVanity(h) as unknown as PreactVanityH
+/** 该适配器在 `Object.prototype` 上注册的属性名 */
+export const KEY = '$preact'
+
+const vanity = createVanity(h, { key: KEY }) as unknown as PreactVanityH
 export default vanity
+
+declare global {
+  interface VanityKeys {
+    [KEY]: PreactElementBuilder<any>
+  }
+}
 
 export function defineComponent<T extends (props: any) => JSX.Element>(
   component: T
-): T & { $: PreactElementBuilder<ExtractComponentProps<T>> } {
+): T & { [KEY]: PreactElementBuilder<ExtractComponentProps<T>> } {
   return component as any
 }
