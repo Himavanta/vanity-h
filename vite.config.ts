@@ -6,7 +6,7 @@ export default defineConfig({
     dts: true,
     minify: true,
     platform: 'neutral',
-    exports: true
+    exports: { inlinedDependencies: false }
   },
   lint: {
     options: {
