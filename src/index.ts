@@ -1,4 +1,4 @@
-export type ExtractComponentProps<T> = T extends (props: infer P) => any ? P : {}
+export type ExtractComponentProps<T> = T extends (props: infer P) => unknown ? P : {}
 
 type UniversalChild = unknown
 
@@ -11,7 +11,7 @@ export type ElementBuilder<Props, VNode, Child = UniversalChild> = ((
 export type VanityH<
   VNode,
   Child = UniversalChild,
-  HtmlElements = Record<string, Record<string, any>>
+  HtmlElements = Record<string, Record<string, unknown>>
 > = {
   [Tag in keyof HtmlElements]: ElementBuilder<HtmlElements[Tag], VNode, Child>
 }
@@ -30,13 +30,20 @@ export interface VanityOptions {
  */
 declare global {
   interface VanityKeys {
-    /** 默认 key，未显式指定 `options.key` 时使用 */
+    /**
+     * 默认 key，未显式指定 `options.key` 时使用。
+     *
+     * 此处必须为 `any`：它是被消费的位置（`obj.$` 直接链式调用），
+     * 换成 `unknown` 会让所有访问报 TS18046。
+     */
     $: any
   }
   interface Object extends VanityKeys {}
 }
 
 export default createVanity
+// 注：约束的参数位置必须用 `any`（函数参数逆变），改成 `unknown`
+// 会导致 preact/vue 等渲染器的 `h` 无法满足该约束。
 export function createVanity<
   H extends (tag: any, props: any, ...children: any[]) => any,
   VNode = ReturnType<H>

@@ -31,7 +31,12 @@ export default vanity
 
 declare global {
   interface VanityKeys {
-    [KEY]: PreactElementBuilder<any>
+    /**
+     * 值为 `any`：这是被消费的位置（`obj.$preact` 直接链式调用），
+     * 写成具体 builder 类型会让 `name` 与函数内置的 `Function.name` 撞车。
+     * 精确类型由各 `defineComponent` 的返回值提供。
+     */
+    [KEY]: any
   }
 }
 
