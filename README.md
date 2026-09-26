@@ -25,7 +25,9 @@ h('div', { class: 'card' }, [
     h('h2', null, 'Title'),
     h('button', { class: 'close', onClick: handleClose }, '×')
   ]),
-  h('main', { class: 'card-body' }, [h('p', null, 'Content goes here')])
+  h('main', { class: 'card-body' }, [
+    h('p', null, 'Content goes here')
+  ])
 ])
 ```
 
@@ -39,8 +41,13 @@ Every layer adds indentation. Attributes, events, and children interleave. The v
 
 ```js
 div.class('card')(
-  header.class('card-header')(h2('Title'), button.class('close').onClick(handleClose)('×')),
-  main.class('card-body')(p('Content goes here'))
+  header.class('card-header')(
+    h2('Title'),
+    button.class('close').onClick(handleClose)('×')
+  ),
+  main.class('card-body')(
+    p('Content goes here')
+  )
 )
 ```
 
@@ -86,7 +93,7 @@ npm install vanity-h
 
 ```js
 import { h, render } from 'preact'
-import createVanity from 'vanity-h'
+import { createVanity } from 'vanity-h'
 
 const { div, span, button } = createVanity(h)
 
@@ -111,7 +118,7 @@ No build step required. Import directly in the browser.
 ```html
 <script type="module">
   import { h, render } from 'https://esm.sh/preact'
-  import createVanity from 'https://esm.sh/vanity-h'
+  import { createVanity } from 'https://esm.sh/vanity-h'
 
   const { div, span } = createVanity(h)
 
@@ -130,7 +137,7 @@ Works with any hyperscript renderer — Preact, React, Vue, Snabbdom, or your ow
 
 ```js
 import { h } from 'your-renderer'
-import createVanity from 'vanity-h'
+import { createVanity } from 'vanity-h'
 
 const { div, h1, p, a, img, input, button } = createVanity(h)
 ```
@@ -152,8 +159,8 @@ const { div, h1, p, a, img, input, button } = createVanity(h)
 
 **Children / 子节点**
 
-- Pass them as arguments to the final call. Strings, numbers, other elements, arrays — anything your hyperscript function accepts.
-- 在最终调用中作为参数传入。字符串、数字、其他元素、数组——任意你的 hyperscript 函数接受的内容。
+- Pass them as arguments to the final call. Strings, numbers, other elements, arrays — anything your hyperscript function accepts. Arrays are flattened automatically.
+- 在最终调用中作为参数传入。字符串、数字、其他元素、数组——任意你的 hyperscript 函数接受的内容。数组会自动打平。
 
 ```js
 // Attribute chaining / 属性链式调用
@@ -176,53 +183,87 @@ div(
 
 ## Wrapping Components / 包装组件
 
-Use `x(Component)` — returned by `createVanity(h)` — to turn any component function into a chainable vanity-h element. This works with your own components, third‑party components, or anything that accepts props.
+Pass a `key` to `createVanity(h, { key })` and every object gains a property under that name. Reading `anyObject.key` returns a builder bound to that object, so any function that accepts props can be rendered like an element:
 
-使用 `createVanity(h)` 返回的 `x(Component)` 可将任意组件函数转换为可链式调用的 vanity-h 元素。这适用于你自己的组件、第三方组件，或任何接受 props 的函数。
+向 `createVanity(h, { key })` 传入 `key` 后，每个对象都会获得一个以该名字命名的属性。读取 `anyObject.key` 会返回绑定到该对象的 builder，于是任何接受 props 的函数都能像元素一样渲染：
 
 ```js
-import createVanity from 'vanity-h'
 import { h } from 'your-renderer'
+import { createVanity } from 'vanity-h'
 
-const { div, button, x } = createVanity(h)
+const { div, button } = createVanity(h, { key: '$' })
 
 function FancyButton({ label, onClick }) {
   return button.class('fancy').onClick(onClick)(label)
 }
 
-// Wrap with x() and chain props / 用 x() 包装并链式设置 props
-x(FancyButton).label('Save').onClick(handleSave)()
-```
-
-Every object automatically gains a `$` property that is equivalent to calling `x()` on that object. The following is identical:
-
-每个对象自动获得一个 `$` 属性，等价于对该对象调用 `x()`。以下写法完全等价：
-
-```js
+// Chain props through the key, then call to render
+// 通过 key 链式设置 props，最后调用以渲染
 FancyButton.$.label('Save').onClick(handleSave)()
 ```
 
-`$` requires no import — it is a global convenience. `x()` is the explicit form, available from `createVanity(h)`. Both are core features, not framework adapters. They work with any renderer, with no extra packages.
+`key` **must be passed explicitly.** Without it, nothing is registered and `anyObject.key` stays `undefined` — this is deliberate, so the declared types can never disagree with what exists at runtime.
 
-`$` 无需导入 —— 它是一个全局便捷属性。`x()` 是显式形式，从 `createVanity(h)` 中获取。两者都是核心特性，不是框架适配层。适用于任何渲染器，无需额外包。
+`key` **必须显式传入。** 不传则不会注册任何属性，`anyObject.key` 保持 `undefined`——这是刻意的：避免「类型声明了某个 key、运行时却没有」的不一致。
+
+`createVanity(h, { key })` installs a getter on `Object.prototype`. Because the name is yours to choose, different renderers can register different keys and coexist in the same process.
+
+`createVanity(h, { key })` 会在 `Object.prototype` 上安装一个 getter。名字由你决定，因此不同的渲染器可以注册不同的 key，共存于同一进程。
 
 ---
 
 ## TypeScript / 类型支持
 
 ```typescript
-import createVanity, { type VanityH } from 'vanity-h'
+import { createVanity, type VanityH } from 'vanity-h'
 import { h, type VNode } from 'your-renderer'
 
-const v: VanityH<VNode> = createVanity(h)
+const vanity: VanityH<VNode> = createVanity(h)
 
-// v.div, v.span, etc. are all typed
-const element = v.div.class('test').id('app')('content')
+// vanity.div, vanity.span, etc. are all typed
+const element = vanity.div.class('test').id('app')('content')
 ```
 
-The `VanityH<R>` type carries the renderer's node type, so your chainable elements return the correct VNode type for your renderer.
+The `VanityH<VNode, Child, HtmlElements>` type carries the renderer's node type, so your chainable elements return the correct VNode type for your renderer.
 
-`VanityH<R>` 类型携带渲染器的节点类型，因此你的链式元素会为你的渲染器返回正确的 VNode 类型。
+`VanityH<VNode, Child, HtmlElements>` 类型携带渲染器的节点类型，因此你的链式元素会为你的渲染器返回正确的 VNode 类型。
+
+### Typing the `key` / 为 `key` 添加类型
+
+`key` is typed separately from `createVanity`. The wrapper cannot know at compile time which name you pass at runtime, so the property is not part of the inferred type — declare it yourself by augmenting `VanityKeys`:
+
+`key` 的类型与 `createVanity` 是分开的。包装器在编译期无法知道你在运行时传入了哪个名字，所以该属性不会自动出现在类型里——需要你通过增强 `VanityKeys` 自行声明：
+
+```typescript
+import { type ElementBuilder } from 'vanity-h'
+
+// Augment once, in a .d.ts or any module of your project
+// 声明一次即可，放在 .d.ts 或项目的任意模块中
+declare global {
+  interface VanityKeys {
+    $: any
+  }
+}
+```
+
+Use a precise `ElementBuilder` instead of `any` to get typed props:
+
+把 `any` 换成具体的 `ElementBuilder`，即可获得带类型的 props：
+
+```typescript
+declare global {
+  interface VanityKeys {
+    $: ElementBuilder<{ label?: string }, VNode>
+  }
+}
+
+FancyButton.$.label('Save')   // ✓ typed
+FancyButton.$.bad('x')        // ✗ error
+```
+
+Keep the declared key in sync with the `key` you pass to `createVanity` — nothing registers a property automatically, for you or the compiler.
+
+声明的 key 必须与传给 `createVanity` 的 `key` 保持一致——无论对运行时还是编译器，都不会有属性被自动注册。
 
 ---
 
