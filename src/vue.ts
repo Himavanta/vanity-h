@@ -54,7 +54,6 @@ export type ExtractVueProps<T> = T extends abstract new (...args: any[]) => { $p
 export const KEY = '$vue'
 
 export const vanity = createVanity(h, { key: KEY }) as unknown as VueVanityH
-export default vanity
 
 declare global {
   interface VanityKeys {

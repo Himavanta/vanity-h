@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import vanity, { defineComponent } from 'vanity-h/preact'
+import { vanity, defineComponent } from 'vanity-h/preact'
 
 const { div, main, img } = vanity
 

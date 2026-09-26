@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import vanity, { defineComponent } from 'vanity-h/react'
+import { vanity, defineComponent } from 'vanity-h/react'
 
 const { div, main, img } = vanity
 

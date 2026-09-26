@@ -1,4 +1,4 @@
-import vanity, { defineComponent } from 'vanity-h/vue'
+import { vanity, defineComponent } from 'vanity-h/vue'
 import { createApp, type EmitFn, Transition } from 'vue'
 
 const { div, img } = vanity
@@ -34,11 +34,12 @@ const Demo2 = defineComponent(
 const App = defineComponent(() => {
   return () =>
     div(
-      Transition.$vue.name('fade')(),
-      div
-        .class({ style_class: true })
-        .style({ color: 'red' })
-        .onclick(() => {})(),
+      Transition.$vue.name('fade')(
+        div
+          .class({ style_class: true })
+          .style({ color: 'red' })
+          .onclick(() => {})()
+      ),
       Demo.$vue
         .name('tom')
         .age(20)

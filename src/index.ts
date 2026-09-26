@@ -41,7 +41,6 @@ declare global {
   interface Object extends VanityKeys {}
 }
 
-export default createVanity
 // 注：约束的参数位置必须用 `any`（函数参数逆变），改成 `unknown`
 // 会导致 preact/vue 等渲染器的 `h` 无法满足该约束。
 export function createVanity<

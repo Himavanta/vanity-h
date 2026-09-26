@@ -22,8 +22,7 @@ export type ReactVanityH = VanityH<JSX.Element, ReactNode, JSX.IntrinsicElements
 /** 该适配器在 `Object.prototype` 上注册的属性名 */
 export const KEY = '$react'
 
-const vanity = createVanity(createElement, { key: KEY }) as unknown as ReactVanityH
-export default vanity
+export const vanity = createVanity(createElement, { key: KEY }) as unknown as ReactVanityH
 
 declare global {
   interface VanityKeys {

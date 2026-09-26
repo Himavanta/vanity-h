@@ -26,8 +26,7 @@ export type PreactVanityH = VanityH<JSX.Element, ComponentChild, JSX.IntrinsicEl
 /** 该适配器在 `Object.prototype` 上注册的属性名 */
 export const KEY = '$preact'
 
-const vanity = createVanity(h, { key: KEY }) as unknown as PreactVanityH
-export default vanity
+export const vanity = createVanity(h, { key: KEY }) as unknown as PreactVanityH
 
 declare global {
   interface VanityKeys {
