@@ -1,6 +1,6 @@
 {
   "name": "vanity-h",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Hyperscript without the nesting — chainable syntax that reads the way the DOM looks.",
   "keywords": [
     "Hyperscript Tagged Markup",
