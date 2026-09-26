@@ -17,7 +17,12 @@ export type VanityH<
 }
 
 export interface VanityOptions {
-  /** 挂载到 `Object.prototype` 上的属性名，用于链式包装组件。默认 `'$'` */
+  /**
+   * 挂载到 `Object.prototype` 上的属性名，用于链式包装组件。
+   *
+   * 只有显式传入时才会注册；不传则不注册，`obj.key` 也不可用。
+   * 之所以不提供默认值，是为了避免「类型声明与实际注册的 key 不一致」。
+   */
   key?: string
 }
 
@@ -25,19 +30,14 @@ export interface VanityOptions {
  * 组件包装入口的注册表。
  *
  * 各框架适配器（`vanity-h/preact` 等）会在自己的模块里向此处添加对应的
- * key，从而让任意对象上的 `obj.key` 获得精确类型；`Object` 继承它，
+ * key，从而让任意对象上的 `obj.key` 获得类型；`Object` 继承它，
  * 所以只需声明一次即可作用于所有对象。
+ *
+ * 注意：接口本身不声明任何 key。key 的类型必须由**实际挂载它的模块**声明，
+ * 否则会出现「类型说存在、运行时为 `undefined`」的不一致。
  */
 declare global {
-  interface VanityKeys {
-    /**
-     * 默认 key，未显式指定 `options.key` 时使用。
-     *
-     * 此处必须为 `any`：它是被消费的位置（`obj.$` 直接链式调用），
-     * 换成 `unknown` 会让所有访问报 TS18046。
-     */
-    $: any
-  }
+  interface VanityKeys {}
   interface Object extends VanityKeys {}
 }
 
@@ -47,7 +47,7 @@ export default createVanity
 export function createVanity<
   H extends (tag: any, props: any, ...children: any[]) => any,
   VNode = ReturnType<H>
->(h: H, { key = '$' }: VanityOptions = {}): VanityH<VNode> {
+>(h: H, { key }: VanityOptions = {}): VanityH<VNode> {
   const createProxy = (tag: any, props: Record<string, any> = {}): ElementBuilder<any, VNode> => {
     const fn = (...children: any[]) => h(tag, { ...props }, ...children.flat(Infinity))
     return new Proxy(fn as any, {
@@ -55,12 +55,14 @@ export function createVanity<
     })
   }
 
-  Object.defineProperty(Object.prototype, key, {
-    get() {
-      return createProxy(this.valueOf())
-    },
-    configurable: true
-  })
+  if (key) {
+    Object.defineProperty(Object.prototype, key, {
+      get() {
+        return createProxy(this.valueOf())
+      },
+      configurable: true
+    })
+  }
 
   return new Proxy({} as any, {
     get: (_, tag: string) => createProxy(tag)
