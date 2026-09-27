@@ -1,6 +1,6 @@
-import { rox } from 'roxcss'
+import { rox as defaultRox, type RoxInstance } from 'roxcss'
 
-import { createVanity, type ElementBuilder } from './index.ts'
+import { createVanity, type VanityH } from './index.ts'
 
 const INSERT_MODES = ['prepend', 'append', 'before', 'after'] as const
 type InsertMode = (typeof INSERT_MODES)[number]
@@ -60,7 +60,7 @@ Object.assign(
   )
 )
 
-type VanityProps = Record<string, unknown> & {
+export type VanityProps = Record<string, unknown> & {
   className?: string
   class?: string
   rox?: string
@@ -68,16 +68,40 @@ type VanityProps = Record<string, unknown> & {
   name?: string
 }
 type ComponentFn = (props: Record<string, unknown>) => Node
+type H = (tag: string | ComponentFn, props: VanityProps, ...children: Node[]) => Node
 
-// 声明 `$` 的类型：运行时由下方 createVanity 注册，类型需要在这里显式补上
-declare global {
-  interface VanityKeys {
-    $: ElementBuilder<VanityProps, Node, Node>
-  }
+export interface DomVanityOptions {
+  /** 解析 `rox` 属性的 roxcss 实例；默认使用 roxcss 的默认预设 */
+  rox?: RoxInstance
+  /** 注册到 `Object.prototype` 上的属性名，默认 `'$'` */
+  key?: string
 }
 
-export const vanity = createVanity(
-  (tag: string | ComponentFn, propsAlias: VanityProps, ...children: Node[]) => {
+/** DOM 渲染器实例 */
+export interface DomVanity {
+  vanity: VanityH<Node, unknown, Record<string, VanityProps>>
+  css: (raw: TemplateStringsArray, ...values: unknown[]) => Node
+}
+
+/**
+ * 创建 DOM 渲染器实例。
+ *
+ * 传入自定义的 roxcss 实例即可扩展 `rox` 属性的工具类词汇
+ * （例如为 CSS 变量、自有原子类注册 matcher）。
+ *
+ * 注意：注册到 `Object.prototype` 的 key 未自带类型声明。
+ * 使用方需自行补充，例如：
+ *
+ * ```ts
+ * declare global {
+ *   interface VanityKeys {
+ *     $: ElementBuilder<VanityProps, Node, Node>
+ *   }
+ * }
+ * ```
+ */
+export function createDomVanity({ rox = defaultRox, key = '$' }: DomVanityOptions = {}): DomVanity {
+  const h: H = (tag, propsAlias, ...children) => {
     if (typeof tag === 'function') return tag({ ...propsAlias, children })
 
     const { class: classAlias, rox: roxAlias, ...props } = propsAlias
@@ -91,9 +115,16 @@ export const vanity = createVanity(
     const el = Object.assign(document.createElement(tag), props)
     for (const item of children) el.append(item)
     return el
-  },
-  { key: '$' }
-)
+  }
 
-export const css = (raw: TemplateStringsArray, ...values: any[]) =>
-  vanity.style(String.raw({ raw }, ...values))
+  const vanity = createVanity(h, { key }) as unknown as VanityH<
+    Node,
+    unknown,
+    Record<string, VanityProps>
+  >
+
+  const css = (raw: TemplateStringsArray, ...values: unknown[]) =>
+    vanity.style(String.raw({ raw }, ...values))
+
+  return { vanity, css }
+}

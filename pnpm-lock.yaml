@@ -226,6 +226,9 @@ importers:
 
   examples/dom:
     dependencies:
+      roxcss:
+        specifier: 'catalog:'
+        version: 0.0.1
       vanity-h:
         specifier: workspace:*
         version: link:../..
