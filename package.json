@@ -29,8 +29,10 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
+    "./dom": "./dist/dom.js",
     "./preact": "./dist/preact.js",
     "./react": "./dist/react.js",
+    "./ssr": "./dist/ssr.js",
     "./vue": "./dist/vue.js",
     "./package.json": "./package.json"
   },
@@ -49,6 +51,7 @@
     "@types/react": "catalog:",
     "preact": "catalog:",
     "react": "catalog:",
+    "roxcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",

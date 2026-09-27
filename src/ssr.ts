@@ -1,4 +1,4 @@
-import { createVanity, type ElementBuilder, type VanityH } from 'vanity-h'
+import { createVanity, type ElementBuilder, type VanityH } from './index.ts'
 
 /**
  * 无 JSX 的字符串 SSR 渲染库。
@@ -92,14 +92,18 @@ const h: H = (tag, props, ...children) => {
   return html
 }
 
-// 声明 `$` 的类型：运行时由下方 createVanity 注册，类型需要在这里显式补上
+/** 该入口在 `Object.prototype` 上注册的属性名 */
+export const KEY = '$ssr'
+
+// 声明 `$ssr` 的类型：运行时由下方 createVanity 注册，类型需要在这里显式补上
+// 用独立 key 而非 `$`，避免与 `vanity-h/dom` 等入口在同一编译单元中冲突
 declare global {
   interface VanityKeys {
-    $: ElementBuilder<Record<string, unknown>, string>
+    [KEY]: ElementBuilder<Record<string, unknown>, string>
   }
 }
 
-export const vanity: VanityH<string> = createVanity<H>(h, { key: '$' })
+export const vanity: VanityH<string> = createVanity<H>(h, { key: KEY })
 
 /** `css\`...\`` → `<style>` 节点 */
 export const css = (raw: TemplateStringsArray, ...values: any[]) =>

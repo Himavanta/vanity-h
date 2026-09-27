@@ -1,8 +1,7 @@
 import type { H3Event } from 'nitro'
 import { html } from 'nitro'
 import { raw } from 'nitro/h3'
-
-import { CLIENT_RUNTIME, vanity, css } from '../utils/ssr.ts'
+import { CLIENT_RUNTIME, vanity, css } from 'vanity-h/ssr'
 
 const { input, div, script, body } = vanity
 
@@ -10,7 +9,7 @@ function demo({ children }: { children: unknown }) {
   return div('组件插槽：', div(children))
 }
 
-export default (event: H3Event) => {
+export default (_event: H3Event) => {
   function bindEv({ parentElement }: HTMLOrSVGScriptElement) {
     console.log(parentElement)
     parentElement!.onclick = () => {
@@ -34,7 +33,7 @@ export default (event: H3Event) => {
           input.id('input4')(),
           input.id('input5')(),
           input.id('input6')(),
-          demo.$(div('content'), 'content2'),
+          demo.$ssr(div('content'), 'content2'),
           script(bindEv)
         )
       )
