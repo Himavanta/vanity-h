@@ -1,0 +1,20 @@
+{
+  "name": "nitro-starter",
+  "type": "module",
+  "imports": {
+    "#*": "./*"
+  },
+  "scripts": {
+    "build": "nitro build",
+    "dev": "nitro dev",
+    "preview": "nitro preview"
+  },
+  "dependencies": {
+    "vanity-h": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "nitro": "latest",
+    "typescript": "catalog:"
+  }
+}
