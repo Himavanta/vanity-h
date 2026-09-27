@@ -73,7 +73,12 @@ type H = (tag: string | ComponentFn, props: VanityProps, ...children: Node[]) =>
 export interface DomVanityOptions {
   /** 解析 `rox` 属性的 roxcss 实例；默认使用 roxcss 的默认预设 */
   rox?: RoxInstance
-  /** 注册到 `Object.prototype` 上的属性名，默认 `'$'` */
+  /**
+   * 注册到 `Object.prototype` 上的属性名。
+   *
+   * 只有显式传入时才会注册；不传则不注册，`obj.key` 也不可用。
+   * 与 `createVanity` 一致，不提供默认值，避免「类型声明与实际注册的 key 不一致」。
+   */
   key?: string
 }
 
@@ -100,7 +105,7 @@ export interface DomVanity {
  * }
  * ```
  */
-export function createDomVanity({ rox = defaultRox, key = '$' }: DomVanityOptions = {}): DomVanity {
+export function createDomVanity({ rox = defaultRox, key }: DomVanityOptions = {}): DomVanity {
   const h: H = (tag, propsAlias, ...children) => {
     if (typeof tag === 'function') return tag({ ...propsAlias, children })
 

@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const { vanity } = createDomVanity({ rox })
+const { vanity } = createDomVanity({ rox, key: '$' })
 
 const { a, button, code, div, h1, h2, img, li, p, section, ul } = vanity
 
