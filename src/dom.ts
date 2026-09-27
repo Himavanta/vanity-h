@@ -67,8 +67,8 @@ export type VanityProps = Record<string, unknown> & {
   /** 显式声明：否则索引签名不会覆盖函数内置的 `Function.name`，导致 `$.name(...)` 不可调用 */
   name?: string
 }
-type ComponentFn = (props: Record<string, unknown>) => Node
-type H = (tag: string | ComponentFn, props: VanityProps, ...children: Node[]) => Node
+type ComponentFn = (props: Record<string, unknown>) => Element
+type H = (tag: string | ComponentFn, props: VanityProps, ...children: Node[]) => Element
 
 export interface DomVanityOptions {
   /** 解析 `rox` 属性的 roxcss 实例；默认使用 roxcss 的默认预设 */
@@ -79,8 +79,8 @@ export interface DomVanityOptions {
 
 /** DOM 渲染器实例 */
 export interface DomVanity {
-  vanity: VanityH<Node, unknown, Record<string, VanityProps>>
-  css: (raw: TemplateStringsArray, ...values: unknown[]) => Node
+  vanity: VanityH<Element, unknown, Record<string, VanityProps>>
+  css: (raw: TemplateStringsArray, ...values: unknown[]) => Element
 }
 
 /**
@@ -95,7 +95,7 @@ export interface DomVanity {
  * ```ts
  * declare global {
  *   interface VanityKeys {
- *     $: ElementBuilder<VanityProps, Node, Node>
+ *     $: ElementBuilder<VanityProps, Element, Node>
  *   }
  * }
  * ```
@@ -118,7 +118,7 @@ export function createDomVanity({ rox = defaultRox, key = '$' }: DomVanityOption
   }
 
   const vanity = createVanity(h, { key }) as unknown as VanityH<
-    Node,
+    Element,
     unknown,
     Record<string, VanityProps>
   >

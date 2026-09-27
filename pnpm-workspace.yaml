@@ -7,7 +7,7 @@ catalog:
   '@types/react': ^19.3.0
   preact: ^10.29.8
   react: ^19.3.0
-  roxcss: ^0.0.1
+  roxcss: ^0.0.3
   typescript: ^7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@1.0.0-rc.0
   vite-plus: 1.0.0-rc.0
@@ -15,6 +15,7 @@ catalog:
 
 minimumReleaseAgeExclude:
   - '@types/node@26.6.3'
+  - roxcss@0.0.3
 overrides:
   vite: 'catalog:'
 peerDependencyRules:
