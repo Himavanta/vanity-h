@@ -46,21 +46,21 @@ function LinkItem({ href, label, media }: { href: string; label: string; media: 
 
 /** 图标 + 标题 + 副标题 + 链接列表 */
 function Panel({
-  id,
   icon,
   title: heading,
   subtitle,
+  divider,
   links
 }: {
-  id: string
   icon: string
   title: string
   subtitle: string
+  divider?: boolean
   links: { href: string; label: string; media: Node }[]
 }) {
-  // `docs` 面板右侧与 `social` 分隔，窄屏时改为下边框（对应原 `.css` 的 lg 断点）
-  const divider = id === 'docs' ? 'border-r lg:border-r-none lg:border-b' : ''
-  return div.id(id).rox(`flex-1 p-32px lg:py-24px lg:px-20px ${divider}`)(
+  return div.rox(
+    `flex-1 p-32px lg:py-24px lg:px-20px ${divider ? 'border-r lg:border-r-none lg:border-b' : ''}`
+  )(
     Icon.$.name(icon).className('w-22px h-22px mb-16px')(),
     h2(heading),
     p(subtitle),
@@ -75,7 +75,6 @@ function Counter() {
   let count = 0
 
   return button
-    .id('counter')
     .type('button')
     .rox(
       'inline-flex font-mono text-16px pt-5px pb-5px pl-10px pr-10px rounded-5px color-accent bg-accent-bg border-2px-solid-transparent transition-border mb-24px hover:border-color-accent-border focus-visible:outline'
@@ -110,16 +109,12 @@ const socialLinks = [
   media: Icon.$.name(icon).className('social-icon w-18px h-18px')()
 }))
 
-// 一次插入整棵树（包含 `#app` 自身），到 `body`
+// 一次插入整棵树到 `body`
 void 'body'.append(
-  div
-    .id('app')
-    .rox('w-1126px max-w-100% m-auto text-center border-x min-h-100svh flex-col box-border')(
-    section
-      .id('center')
-      .rox(
-        'flex-col gap-25px place-content-center place-items-center grow lg:gap-18px lg:pt-32px lg:px-20px lg:pb-24px'
-      )(
+  div.rox('w-1126px max-w-100% m-auto text-center border-x min-h-100svh flex-col box-border')(
+    section.rox(
+      'flex-col gap-25px place-content-center place-items-center grow lg:gap-18px lg:pt-32px lg:px-20px lg:pb-24px'
+    )(
       div.rox('relative')(
         img
           .src(heroImg)
@@ -142,14 +137,13 @@ void 'body'.append(
 
     div.class('ticks')(),
 
-    section.id('next-steps').rox('flex border-t text-left lg:flex-col lg:text-center')(
-      Panel.$.id('docs')
-        .icon('documentation-icon')
+    section.rox('flex border-t text-left lg:flex-col lg:text-center')(
+      Panel.$.icon('documentation-icon')
         .title('Documentation')
         .subtitle('Your questions, answered')
+        .divider(true)
         .links(docsLinks)(),
-      Panel.$.id('social')
-        .icon('social-icon')
+      Panel.$.icon('social-icon')
         .title('Connect with us')
         .subtitle('Join the Vite community')
         .links(socialLinks)()
@@ -157,6 +151,6 @@ void 'body'.append(
 
     div.class('ticks')(),
 
-    section.id('spacer').rox('h-88px border-t lg:h-48px')()
+    section.rox('h-88px border-t lg:h-48px')()
   )
 )

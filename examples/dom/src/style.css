@@ -51,10 +51,10 @@
     --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
 
-  #social .social-icon {
+  /* `social-icon` 类的图标在暗色模式下反色（白底字符转黑） */
+  .social-icon {
     filter: invert(1) brightness(2);
-  }
-}
+  }}
 
 body {
   margin: 0;
