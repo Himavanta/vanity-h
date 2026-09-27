@@ -8,7 +8,7 @@ import { createVanity, type ElementBuilder, type VanityH } from './index.ts'
  */
 
 /** 空格分隔字符串 → Set，用于元素/属性查找表 */
-export const splitSet = (str: string): Set<string> => new Set(str.trim().split(/\s+/))
+const splitSet = (str: string): Set<string> => new Set(str.trim().split(/\s+/))
 
 const VOID_ELEMENTS = splitSet(
   'area base br col embed hr img input link meta param source track wbr'
@@ -92,6 +92,12 @@ const h: H = (tag, props, ...children) => {
   return html
 }
 
+/** SSR 属性表。`name` 需显式声明，否则索引签名不会覆盖函数内置的 `Function.name`，
+ * 导致 `meta.name(...)` / `input.name(...)` 等不可调用。 */
+export type SsrProps = Record<string, unknown> & {
+  name?: string
+}
+
 /** 该入口在 `Object.prototype` 上注册的属性名 */
 export const KEY = '$ssr'
 
@@ -99,11 +105,15 @@ export const KEY = '$ssr'
 // 用独立 key 而非 `$`，避免与 `vanity-h/dom` 等入口在同一编译单元中冲突
 declare global {
   interface VanityKeys {
-    [KEY]: ElementBuilder<Record<string, unknown>, string>
+    [KEY]: ElementBuilder<SsrProps, string>
   }
 }
 
-export const vanity: VanityH<string> = createVanity<H>(h, { key: KEY })
+export const vanity = createVanity<H>(h, { key: KEY }) as unknown as VanityH<
+  string,
+  unknown,
+  Record<string, SsrProps>
+>
 
 /** `css\`...\`` → `<style>` 节点 */
 export const css = (raw: TemplateStringsArray, ...values: any[]) =>
