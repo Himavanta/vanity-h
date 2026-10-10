@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const { vanity } = createDomVanity({ rox, key: '$' })
+const { vanity } = createDomVanity({ key: '$' })
 
 const { a, button, code, div, h1, h2, img, li, p, section, ul } = vanity
 
@@ -34,14 +34,14 @@ function Link({ href, label, media }: { href: string; label: string; media: Node
   return a
     .href(href)
     .target('_blank')
-    .rox(
-      'flex items-center gap-8px px-12px py-6px rounded-6px text-16px color-text-h bg-social-bg no-underline transition-shadow hover:shadow lg:w-100% lg:justify-center lg:box-border'
+    .className(
+      rox`flex items-center gap-8px px-12px py-6px rounded-6px text-16px color-text-h bg-social-bg no-underline transition-shadow hover:shadow lg:w-100% lg:justify-center lg:box-border`
     )(media, label)
 }
 
 /** 列表项：`li` 包一个 `Link` */
 function LinkItem({ href, label, media }: { href: string; label: string; media: Node }) {
-  return li.rox('lg:flex-half')(Link.$.href(href).label(label).media(media)())
+  return li.className(rox`lg:flex-half`)(Link.$.href(href).label(label).media(media)())
 }
 
 /** 图标 + 标题 + 副标题 + 链接列表 */
@@ -58,13 +58,13 @@ function Panel({
   divider?: boolean
   links: { href: string; label: string; media: Node }[]
 }) {
-  return div.rox(
-    `flex-1 p-32px lg:py-24px lg:px-20px ${divider ? 'border-r lg:border-r-none lg:border-b' : ''}`
+  return div.className(
+    rox`flex-1 p-32px lg:py-24px lg:px-20px ${divider ? 'border-r lg:border-r-none lg:border-b' : ''}`
   )(
     Icon.$.name(icon).className('w-22px h-22px mb-16px')(),
     h2(heading),
     p(subtitle),
-    ul.rox('list-none p-0 flex gap-8px mt-32px lg:mt-20px lg:flex-wrap lg:justify-center')(
+    ul.className(rox`list-none p-0 flex gap-8px mt-32px lg:mt-20px lg:flex-wrap lg:justify-center`)(
       links.map(({ href, label, media }) => LinkItem.$.href(href).label(label).media(media)())
     )
   )
@@ -76,8 +76,8 @@ function Counter() {
 
   return button
     .type('button')
-    .rox(
-      'inline-flex font-mono text-16px pt-5px pb-5px pl-10px pr-10px rounded-5px color-accent bg-accent-bg border-2px-solid-transparent transition-border mb-24px hover:border-color-accent-border focus-visible:outline'
+    .className(
+      rox`inline-flex font-mono text-16px pt-5px pb-5px pl-10px pr-10px rounded-5px color-accent bg-accent-bg border-2px-solid-transparent transition-border mb-24px hover:border-color-accent-border focus-visible:outline`
     )
     .onclick(({ currentTarget }: MouseEvent) => {
       count += 1
@@ -89,12 +89,18 @@ const docsLinks = [
   {
     href: 'https://vite.dev/',
     label: 'Explore Vite',
-    media: img.src(viteLogo).rox('h-18px').alt('')()
+    media: img
+      .src(viteLogo)
+      .className(rox`h-18px`)
+      .alt('')()
   },
   {
     href: 'https://www.typescriptlang.org',
     label: 'Learn more',
-    media: img.src(typescriptLogo).rox('w-18px h-18px').alt('')()
+    media: img
+      .src(typescriptLogo)
+      .className(rox`w-18px h-18px`)
+      .alt('')()
   }
 ]
 
@@ -111,33 +117,35 @@ const socialLinks = [
 
 // 一次插入整棵树到 `body`
 void 'body'.append(
-  div.rox('w-1126px max-w-100% m-auto text-center border-x min-h-100svh flex-col box-border')(
-    section.rox(
-      'flex-col gap-25px place-content-center place-items-center grow lg:gap-18px lg:pt-32px lg:px-20px lg:pb-24px'
+  div.className(
+    rox`w-1126px max-w-100% m-auto text-center border-x min-h-100svh flex-col box-border`
+  )(
+    section.className(
+      rox`flex-col gap-25px place-content-center place-items-center grow lg:gap-18px lg:pt-32px lg:px-20px lg:pb-24px`
     )(
-      div.rox('relative')(
+      div.className(rox`relative`)(
         img
           .src(heroImg)
-          .rox('relative z-0 w-170px inset-x-0 mx-auto')
+          .className(rox`relative z-0 w-170px inset-x-0 mx-auto`)
           .width(170)
           .height(179)
           .alt('')(),
         img
           .src(typescriptLogo)
-          .rox('absolute z-1 top-34px h-28px inset-x-0 mx-auto transforms-framework')
+          .className(rox`absolute z-1 top-34px h-28px inset-x-0 mx-auto transforms-framework`)
           .alt('TypeScript logo')(),
         img
           .src(viteLogo)
-          .rox('absolute z-0 top-107px h-26px w-auto inset-x-0 mx-auto transforms-vite')
+          .className(rox`absolute z-0 top-107px h-26px w-auto inset-x-0 mx-auto transforms-vite`)
           .alt('Vite logo')()
       ),
       div(h1('Get started'), p('Edit ', code('src/main.ts'), ' and save to test ', code('HMR'))),
       Counter()
     ),
 
-    div.class('ticks')(),
+    div.className('ticks')(),
 
-    section.rox('flex border-t text-left lg:flex-col lg:text-center')(
+    section.className(rox`flex border-t text-left lg:flex-col lg:text-center`)(
       Panel.$.icon('documentation-icon')
         .title('Documentation')
         .subtitle('Your questions, answered')
@@ -149,8 +157,8 @@ void 'body'.append(
         .links(socialLinks)()
     ),
 
-    div.class('ticks')(),
+    div.className('ticks')(),
 
-    section.rox('h-88px border-t lg:h-48px')()
+    section.className(rox`h-88px border-t lg:h-48px`)()
   )
 )

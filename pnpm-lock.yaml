@@ -208,9 +208,6 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.3.0
-      roxcss:
-        specifier: 'catalog:'
-        version: 0.0.3
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

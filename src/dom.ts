@@ -1,5 +1,3 @@
-import { rox as defaultRox, type RoxInstance } from 'roxcss'
-
 import { createVanity, type VanityH } from './index.ts'
 
 const INSERT_MODES = ['prepend', 'append', 'before', 'after'] as const
@@ -63,7 +61,6 @@ Object.assign(
 export type VanityProps = Record<string, unknown> & {
   className?: string
   class?: string
-  rox?: string
   /** 显式声明：否则索引签名不会覆盖函数内置的 `Function.name`，导致 `$.name(...)` 不可调用 */
   name?: string
 }
@@ -71,8 +68,6 @@ type ComponentFn = (props: Record<string, unknown>) => Element
 type H = (tag: string | ComponentFn, props: VanityProps, ...children: Node[]) => Element
 
 export interface DomVanityOptions {
-  /** 解析 `rox` 属性的 roxcss 实例；默认使用 roxcss 的默认预设 */
-  rox?: RoxInstance
   /**
    * 注册到 `Object.prototype` 上的属性名。
    *
@@ -91,9 +86,6 @@ export interface DomVanity {
 /**
  * 创建 DOM 渲染器实例。
  *
- * 传入自定义的 roxcss 实例即可扩展 `rox` 属性的工具类词汇
- * （例如为 CSS 变量、自有原子类注册 matcher）。
- *
  * 注意：注册到 `Object.prototype` 的 key 未自带类型声明。
  * 使用方需自行补充，例如：
  *
@@ -105,16 +97,13 @@ export interface DomVanity {
  * }
  * ```
  */
-export function createDomVanity({ rox = defaultRox, key }: DomVanityOptions = {}): DomVanity {
+export function createDomVanity({ key }: DomVanityOptions = {}): DomVanity {
   const h: H = (tag, propsAlias, ...children) => {
     if (typeof tag === 'function') return tag({ ...propsAlias, children })
 
-    const { class: classAlias, rox: roxAlias, ...props } = propsAlias
-
-    const className = [props.className, classAlias, roxAlias && rox`${roxAlias}`]
-      .filter(Boolean)
-      .join(' ')
-
+    // `class` 是 hyperscript 习惯写法，DOM 属性实际名为 `className`：归一后再赋值
+    const { class: classAlias, ...props } = propsAlias
+    const className = [props.className, classAlias].filter(Boolean).join(' ')
     if (className) props.className = className
 
     const el = Object.assign(document.createElement(tag), props)

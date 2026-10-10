@@ -51,7 +51,6 @@
     "@types/react": "catalog:",
     "preact": "catalog:",
     "react": "catalog:",
-    "roxcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",
