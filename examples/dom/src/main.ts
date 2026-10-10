@@ -1,6 +1,6 @@
 import './style.css'
 import { type ElementBuilder } from 'vanity-h'
-import { createDomVanity, type VanityProps } from 'vanity-h/dom'
+import { createDomVanity, append, type VanityProps } from 'vanity-h/dom'
 
 import heroImg from './assets/hero.png'
 import typescriptLogo from './assets/typescript.svg'
@@ -116,7 +116,8 @@ const socialLinks = [
 }))
 
 // 一次插入整棵树到 `body`
-void 'body'.append(
+void append(
+  'body',
   div.className(
     rox`w-1126px max-w-100% m-auto text-center border-x min-h-100svh flex-col box-border`
   )(

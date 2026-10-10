@@ -1,18 +1,8 @@
 import { createVanity, type VanityH } from './index.ts'
 
-const INSERT_MODES = ['prepend', 'append', 'before', 'after'] as const
-type InsertMode = (typeof INSERT_MODES)[number]
+type InsertMode = 'prepend' | 'append' | 'before' | 'after'
 type InsertOptions = { signal?: AbortSignal }
-type InsertFn = (this: string, el: Node, options?: InsertOptions) => Promise<void>
-
-declare global {
-  interface String {
-    prepend: InsertFn
-    append: InsertFn
-    before: InsertFn
-    after: InsertFn
-  }
-}
+export type InsertFn = (selector: string, el: Node, options?: InsertOptions) => Promise<void>
 
 /** 目标存在则立即插入并返回 true,否则不做任何事返回 false */
 const insertOnce = (selector: string, el: Node, mode: InsertMode): boolean => {
@@ -25,42 +15,47 @@ const insertOnce = (selector: string, el: Node, mode: InsertMode): boolean => {
 const abortError = (selector: string) =>
   new DOMException(`等待 "${selector}" 出现时操作被中止`, 'AbortError')
 
-Object.assign(
-  String.prototype,
-  Object.fromEntries(
-    INSERT_MODES.map((mode) => [
-      mode,
-      function (this: string, el: Node, options?: InsertOptions) {
-        const selector = this.valueOf()
-        const { signal } = options ?? {}
+/**
+ * 生成插入函数。
+ *
+ * 目标存在则立即插入；否则等待其出现后再插入。
+ * 传入 `signal` 可中止等待，此时返回的 Promise 以 `AbortError` 拒绝。
+ */
+const createInsert = (mode: InsertMode): InsertFn =>
+  (selector, el, options) => {
+    const { signal } = options ?? {}
 
-        if (signal?.aborted) return Promise.reject(abortError(selector))
-        if (insertOnce(selector, el, mode)) return Promise.resolve()
+    if (signal?.aborted) return Promise.reject(abortError(selector))
+    if (insertOnce(selector, el, mode)) return Promise.resolve()
 
-        return new Promise((resolve, reject) => {
-          const observer = new MutationObserver(() => {
-            if (insertOnce(selector, el, mode)) {
-              observer.disconnect()
-              signal?.removeEventListener('abort', onAbort)
-              resolve()
-            }
-          })
-          const onAbort = () => {
-            observer.disconnect()
-            reject(abortError(selector))
-          }
+    return new Promise((resolve, reject) => {
+      const observer = new MutationObserver(() => {
+        if (insertOnce(selector, el, mode)) {
+          observer.disconnect()
+          signal?.removeEventListener('abort', onAbort)
+          resolve()
+        }
+      })
+      const onAbort = () => {
+        observer.disconnect()
+        reject(abortError(selector))
+      }
 
-          signal?.addEventListener('abort', onAbort, { once: true })
-          observer.observe(document.documentElement, { childList: true, subtree: true })
-        })
-      } as InsertFn
-    ])
-  )
-)
+      signal?.addEventListener('abort', onAbort, { once: true })
+      observer.observe(document.documentElement, { childList: true, subtree: true })
+    })
+  }
+
+/** 插入到目标内部末尾 */
+export const append = createInsert('append')
+/** 插入到目标内部开头 */
+export const prepend = createInsert('prepend')
+/** 插入到目标之前（同级） */
+export const before = createInsert('before')
+/** 插入到目标之后（同级） */
+export const after = createInsert('after')
 
 export type VanityProps = Record<string, unknown> & {
-  className?: string
-  class?: string
   /** 显式声明：否则索引签名不会覆盖函数内置的 `Function.name`，导致 `$.name(...)` 不可调用 */
   name?: string
 }
@@ -98,13 +93,8 @@ export interface DomVanity {
  * ```
  */
 export function createDomVanity({ key }: DomVanityOptions = {}): DomVanity {
-  const h: H = (tag, propsAlias, ...children) => {
-    if (typeof tag === 'function') return tag({ ...propsAlias, children })
-
-    // `class` 是 hyperscript 习惯写法，DOM 属性实际名为 `className`：归一后再赋值
-    const { class: classAlias, ...props } = propsAlias
-    const className = [props.className, classAlias].filter(Boolean).join(' ')
-    if (className) props.className = className
+  const h: H = (tag, props, ...children) => {
+    if (typeof tag === 'function') return tag({ ...props, children })
 
     const el = Object.assign(document.createElement(tag), props)
     for (const item of children) el.append(item)
