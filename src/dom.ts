@@ -21,7 +21,8 @@ const abortError = (selector: string) =>
  * 目标存在则立即插入；否则等待其出现后再插入。
  * 传入 `signal` 可中止等待，此时返回的 Promise 以 `AbortError` 拒绝。
  */
-const createInsert = (mode: InsertMode): InsertFn =>
+const createInsert =
+  (mode: InsertMode): InsertFn =>
   (selector, el, options) => {
     const { signal } = options ?? {}
 
@@ -61,6 +62,35 @@ export type VanityProps = Record<string, unknown> & {
 }
 type ComponentFn = (props: Record<string, unknown>) => Element
 type H = (tag: string | ComponentFn, props: VanityProps, ...children: Node[]) => Element
+/** 元素创建策略：只负责建元素并写入属性 */
+type Build = (tag: string, props: VanityProps) => Element
+type DomVanityH<T extends Element> = VanityH<T, unknown, Record<string, VanityProps>>
+
+const SVG_NS = 'http://www.w3.org/2000/svg'
+
+/** 把组件分派与子节点挂载收拢到一处，具体建元素的方式交给 `build` */
+const makeH =
+  (build: Build): H =>
+  (tag, props, ...children) => {
+    if (typeof tag === 'function') return tag({ ...props, children })
+
+    const el = build(tag, props)
+    for (const item of children) el.append(item)
+    return el
+  }
+
+const h = makeH((tag, props) => Object.assign(document.createElement(tag), props))
+
+/**
+ * SVG 不能用 `Object.assign`：SVG 上大量属性没有可写的 DOM 属性
+ * （`width`/`href` 只读，赋值直接抛错；`d`/`fill` 没有对应属性，赋值只会在元素上
+ * 留下一个不生效的 expando）。因此这里一律走 `setAttribute`。
+ */
+const hSvg = makeH((tag, props) => {
+  const el = document.createElementNS(SVG_NS, tag)
+  for (const [name, value] of Object.entries(props)) el.setAttribute(name, String(value))
+  return el
+})
 
 export interface DomVanityOptions {
   /**
@@ -74,7 +104,13 @@ export interface DomVanityOptions {
 
 /** DOM 渲染器实例 */
 export interface DomVanity {
-  vanity: VanityH<Element, unknown, Record<string, VanityProps>>
+  vanity: DomVanityH<Element>
+  /**
+   * SVG 渲染器：标签走 SVG 命名空间，属性一律走 `setAttribute`。
+   *
+   * 不注册 `Object.prototype` 的 key，通过解构使用。
+   */
+  vanitySVG: DomVanityH<SVGElement>
   css: (raw: TemplateStringsArray, ...values: unknown[]) => Element
 }
 
@@ -93,22 +129,11 @@ export interface DomVanity {
  * ```
  */
 export function createDomVanity({ key }: DomVanityOptions = {}): DomVanity {
-  const h: H = (tag, props, ...children) => {
-    if (typeof tag === 'function') return tag({ ...props, children })
-
-    const el = Object.assign(document.createElement(tag), props)
-    for (const item of children) el.append(item)
-    return el
-  }
-
-  const vanity = createVanity(h, { key }) as unknown as VanityH<
-    Element,
-    unknown,
-    Record<string, VanityProps>
-  >
+  const vanity = createVanity(h, { key }) as unknown as DomVanityH<Element>
+  const vanitySVG = createVanity(hSvg) as unknown as DomVanityH<SVGElement>
 
   const css = (raw: TemplateStringsArray, ...values: unknown[]) =>
     vanity.style(String.raw({ raw }, ...values))
 
-  return { vanity, css }
+  return { vanity, vanitySVG, css }
 }

@@ -14,19 +14,17 @@ declare global {
   }
 }
 
-const { vanity } = createDomVanity({ key: '$' })
+const { vanity, vanitySVG } = createDomVanity({ key: '$' })
 
 const { a, button, code, div, h1, h2, img, li, p, section, ul } = vanity
+const { svg, use } = vanitySVG
 
-/**
- * sprite 图标。dom 渲染器不处理 SVG 命名空间，这里用 `innerHTML` 解析出
- * 真实 SVG 元素（`<use>` 必须包在 `<svg>` 内）。
- * 用 `firstElementChild` 而非 `firstChild`，避免 markup 前导空白解析出文本节点。
- */
+/** sprite 图标。`<use>` 必须包在 `<svg>` 内，因此整体由 `vanitySVG` 构建 */
 function Icon({ name, className }: { name: string; className: string }) {
-  return div.innerHTML(
-    `<svg class="${rox`${className}`}" role="presentation" aria-hidden="true"><use href="/icons.svg#${name}"></use></svg>`
-  )().firstElementChild!
+  return svg
+    .class(rox`${className}`)
+    .role('presentation')
+    ['aria-hidden']('true')(use.href(`/icons.svg#${name}`)())
 }
 
 /** 带图标的链接 */
